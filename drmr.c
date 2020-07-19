@@ -193,7 +193,10 @@ static inline void trigger_sample(DrMr *drmr, int nn, uint8_t* const data) {
   pthread_mutex_lock(&drmr->load_mutex);
   if (nn >= 0 && nn < drmr->num_samples) {
     if (drmr->samples[nn].layer_count > 0) {
-      layer_to_sample(drmr->samples+nn,*(drmr->gains[nn]));
+      // drmr currently has 32 hard-coded gains so just use the last gain
+      // to prevent a segfault
+      int gain_idx = nn < 32 ? nn : 31;
+      layer_to_sample(drmr->samples+nn,*(drmr->gains[gain_idx]));
       if (drmr->samples[nn].limit == 0)
 	fprintf(stderr,"Failed to find layer at: %i for %f\n",nn,*drmr->gains[nn]);
     }
