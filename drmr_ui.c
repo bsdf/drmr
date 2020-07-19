@@ -39,6 +39,7 @@ typedef struct {
   GtkWidget** gain_sliders;
   GtkWidget** pan_sliders;
   GtkWidget *velocity_checkbox, *note_off_checkbox;
+  GtkScrolledWindow *sample_view;
   float *gain_vals,*pan_vals;
 
   gchar *bundle_path;
@@ -267,8 +268,7 @@ static gboolean kit_callback(gpointer data) {
       gain_sliders = malloc(samples*sizeof(GtkWidget*));
       pan_sliders = malloc(samples*sizeof(GtkWidget*));
       fill_sample_table(ui,samples,ui->kits->kits[ui->kitReq].sample_names,gain_sliders,pan_sliders);
-      gtk_box_pack_start(GTK_BOX(ui->drmr_widget),GTK_WIDGET(ui->sample_table),
-			 true,true,5);
+      gtk_scrolled_window_add_with_viewport(ui->sample_view, GTK_WIDGET(ui->sample_table));
       gtk_widget_show_all(GTK_WIDGET(ui->sample_table));
       ui->samples = samples;
       ui->gain_sliders = gain_sliders;
@@ -354,7 +354,9 @@ static void build_drmr_ui(DrMrUi* ui) {
   GtkWidget *drmr_ui_widget;
   GtkWidget *opts_hbox1, *opts_hbox2, 
     *kit_combo_box, *kit_label, *no_kit_label,
-    *base_label, *base_spin, *position_label, *position_combo_box;
+    *base_label, *base_spin, *position_label,
+    *position_combo_box, *sample_view;
+
   GtkCellRenderer *cell_rend;
   GtkAdjustment *base_adj;
   
@@ -417,12 +419,20 @@ static void build_drmr_ui(DrMrUi* ui) {
   gtk_box_pack_start(GTK_BOX(drmr_ui_widget),gtk_hseparator_new(),
 		     false,false,5);
 
+  sample_view = gtk_scrolled_window_new(NULL, NULL);
+  gtk_widget_set_size_request(sample_view, -1, 300);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sample_view),
+		     GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  gtk_box_pack_start(GTK_BOX(drmr_ui_widget), sample_view,
+		     true, true, 5);
+
   ui->drmr_widget = drmr_ui_widget;
   ui->sample_table = NULL;
   ui->kit_combo = GTK_COMBO_BOX(kit_combo_box);
   ui->base_label = GTK_LABEL(base_label);
   ui->base_spin = GTK_SPIN_BUTTON(base_spin);
   ui->no_kit_label = no_kit_label;
+  ui->sample_view = GTK_SCROLLED_WINDOW(sample_view);
 
   g_signal_connect(G_OBJECT(kit_combo_box),"changed",G_CALLBACK(kit_combobox_changed),ui);
   g_signal_connect(G_OBJECT(base_spin),"value-changed",G_CALLBACK(base_changed),ui);
