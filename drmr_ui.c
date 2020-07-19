@@ -269,7 +269,6 @@ static gboolean kit_callback(gpointer data) {
       fill_sample_table(ui,samples,ui->kits->kits[ui->kitReq].sample_names,gain_sliders,pan_sliders);
       gtk_box_pack_start(GTK_BOX(ui->drmr_widget),GTK_WIDGET(ui->sample_table),
 			 true,true,5);
-      gtk_box_reorder_child(GTK_BOX(ui->drmr_widget),GTK_WIDGET(ui->sample_table),0);
       gtk_widget_show_all(GTK_WIDGET(ui->sample_table));
       ui->samples = samples;
       ui->gain_sliders = gain_sliders;
@@ -411,14 +410,12 @@ static void build_drmr_ui(DrMrUi* ui) {
   gtk_box_pack_start(GTK_BOX(opts_hbox2),ui->note_off_checkbox,
 		     true,true,15);
 
-  gtk_box_pack_start(GTK_BOX(drmr_ui_widget),gtk_hseparator_new(),
-		     false,false,5);
   gtk_box_pack_start(GTK_BOX(drmr_ui_widget),opts_hbox1,
 		     false,false,5);
   gtk_box_pack_start(GTK_BOX(drmr_ui_widget),opts_hbox2,
 		     false,false,5);
-
-
+  gtk_box_pack_start(GTK_BOX(drmr_ui_widget),gtk_hseparator_new(),
+		     false,false,5);
 
   ui->drmr_widget = drmr_ui_widget;
   ui->sample_table = NULL;
